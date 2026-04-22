@@ -1,0 +1,33 @@
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+.venv/
+venv/
+env/
+
+# Local model artifacts (too big for git; produced by the notebook)
+# Commit only the small JSON metadata.
+app/model_keras.keras
+app/scalers.joblib
+
+# Datasets and notebook outputs
+features.pkl
+results.pkl
+results_all_checkpoint.pkl
+grid_results_checkpoint.pkl
+results/
+btc_processed.csv
+btc_1d_data_2018_to_2025.csv
+*.png
+*.svg
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+.env

@@ -1,0 +1,129 @@
+/* ========================================================================
+   scalar-theme.css — Palantir-grade dark theme for Scalar API Reference
+   Paleta: negro profundo + azul eléctrico + acento cian.
+   Carga después del script de Scalar (ver index.html / /docs).
+   ======================================================================== */
+
+:root,
+.scalar-app,
+.scalar-api-reference,
+.scalar-app.dark-mode {
+  /* ---- Base surfaces ---------------------------------------------- */
+  --scalar-background-1: #0A0D12;          /* page */
+  --scalar-background-2: #0F141B;          /* cards */
+  --scalar-background-3: #161C26;          /* nested */
+  --scalar-background-accent: #00A3FF14;
+
+  /* ---- Text --------------------------------------------------------- */
+  --scalar-color-1: #E6EDF5;               /* headings */
+  --scalar-color-2: #A6B3C2;               /* body */
+  --scalar-color-3: #6B7889;               /* muted */
+  --scalar-color-accent: #00A3FF;          /* electric blue */
+
+  /* ---- Borders ------------------------------------------------------ */
+  --scalar-border-color: #1E2733;
+
+  /* ---- HTTP method pills (Palantir vibe) --------------------------- */
+  --scalar-color-green:  #39D98A;
+  --scalar-color-blue:   #00A3FF;
+  --scalar-color-orange: #F7931A;          /* guiño a BTC */
+  --scalar-color-red:    #FF5470;
+  --scalar-color-purple: #9D7BFF;
+
+  /* ---- Button / accent --------------------------------------------- */
+  --scalar-button-1:              #00A3FF;
+  --scalar-button-1-hover:        #1FB3FF;
+  --scalar-button-1-color:        #0A0D12;
+
+  /* ---- Sidebar (the thing that screams "Foundry") ------------------ */
+  --scalar-sidebar-background-1:        #0C1117;
+  --scalar-sidebar-item-hover-background:#00A3FF14;
+  --scalar-sidebar-item-active-background:#00A3FF1F;
+  --scalar-sidebar-color-active:        #00A3FF;
+  --scalar-sidebar-border-color:        #1E2733;
+  --scalar-sidebar-search-background:   #0F141B;
+  --scalar-sidebar-search-border-color: #1E2733;
+
+  /* ---- Typography (distinctive, not generic) ----------------------- */
+  --scalar-font:      'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+  --scalar-font-code: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+  /* ---- Radii & shadows --------------------------------------------- */
+  --scalar-radius:    6px;
+  --scalar-radius-lg: 10px;
+  --scalar-radius-xl: 14px;
+  --scalar-shadow-1: 0 1px 3px rgba(0,0,0,.4);
+  --scalar-shadow-2: 0 8px 30px rgba(0,163,255,.08);
+}
+
+/* Global body polish */
+body {
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(0,163,255,.08), transparent 60%),
+    radial-gradient(900px  500px at -10% 10%, rgba(157,123,255,.05), transparent 60%),
+    #0A0D12;
+  font-feature-settings: "ss01", "cv11";
+}
+
+/* Make section headers feel like a dashboard, not a doc */
+.scalar-api-reference h1,
+.scalar-api-reference h2 {
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+/* Endpoint path — monospace with subtle glow */
+.scalar-api-reference .endpoint-path,
+.scalar-api-reference code {
+  font-family: var(--scalar-font-code);
+  font-feature-settings: "ss01";
+}
+
+/* HTTP method pills — sharper corners, tighter weight */
+.scalar-api-reference [class*="method"] {
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Code blocks — true black, no muddy grey */
+.scalar-api-reference pre,
+.scalar-api-reference .code-block {
+  background: #06080B !important;
+  border: 1px solid #1E2733;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
+}
+
+/* Sidebar active state — neon left bar */
+.scalar-api-reference .sidebar-item--active {
+  position: relative;
+}
+.scalar-api-reference .sidebar-item--active::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 6px; bottom: 6px;
+  width: 2px;
+  background: #00A3FF;
+  box-shadow: 0 0 12px #00A3FF;
+}
+
+/* Buttons — flat, confident, no gradient */
+.scalar-api-reference button {
+  transition: transform .12s ease, box-shadow .2s ease;
+}
+.scalar-api-reference button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0,163,255,.22);
+}
+
+/* Scrollbar — discreet, themed */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: #0A0D12; }
+*::-webkit-scrollbar-thumb {
+  background: #1E2733; border-radius: 10px; border: 2px solid #0A0D12;
+}
+*::-webkit-scrollbar-thumb:hover { background: #00A3FF55; }
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');

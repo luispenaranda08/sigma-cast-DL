@@ -1,0 +1,12 @@
+# ── Runtime dependencies for the volatility-forecasting API ───────────────
+# Pinned to the minor version for reproducibility. CI tests against these.
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+pydantic==2.9.2
+
+# Model + preprocessing
+tensorflow-cpu==2.15.0   # CPU-only wheel: smaller image, deterministic in CI
+joblib==1.4.2
+numpy==1.26.4
+scipy==1.13.1
+scikit-learn==1.5.2

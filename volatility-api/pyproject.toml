@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "volatility-api"
+version = "1.0.0"
+description = "FastAPI service for 7-day Bitcoin realized-volatility forecasting."
+readme = "README.md"
+requires-python = ">=3.11"
+
+# ── pytest ────────────────────────────────────────────────────────────────
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = [
+    "-ra",
+    "--strict-config",
+    "--strict-markers",
+    "--tb=short",
+]
+testpaths = ["tests"]
+filterwarnings = [
+    "ignore::DeprecationWarning:tensorflow.*",
+    "ignore::DeprecationWarning:keras.*",
+]
+
+# ── coverage ──────────────────────────────────────────────────────────────
+[tool.coverage.run]
+source = ["app", "scripts"]
+omit = [
+    "tests/*",
+    "*/__init__.py",
+]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+
+# ── ruff ──────────────────────────────────────────────────────────────────
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+extend-exclude = [".venv", "build", "dist"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "UP",   # pyupgrade
+    "N",    # pep8-naming
+    "SIM",  # flake8-simplify
+]
+ignore = [
+    "E501",  # line-length handled by the formatter
+    "B008",  # FastAPI's Depends() is the canonical example of intentional
+             # function-call defaults; this rule produces noise here.
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["N802"]  # allow snake_case mixing in test names

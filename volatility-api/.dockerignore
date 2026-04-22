@@ -1,0 +1,37 @@
+# ── Keep the build context small ──────────────────────────────────────────
+.git
+.github
+.gitignore
+.pytest_cache
+.ruff_cache
+.venv
+venv
+__pycache__
+*.pyc
+*.pyo
+
+# Notebooks and raw data do not belong in the runtime image
+*.ipynb
+notebooks/
+data/
+features.pkl
+results.pkl
+results_all_checkpoint.pkl
+grid_results_checkpoint.pkl
+btc_processed.csv
+btc_1d_data_2018_to_2025.csv
+*.png
+results/
+
+# Local artifacts
+.env
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Editor noise
+.vscode/
+.idea/
+.DS_Store

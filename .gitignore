@@ -1,0 +1,36 @@
+# ── Entornos ──────────────────────────────────────────────
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# ── Artefactos de modelo (pesados) ────────────────────────
+*.keras
+*.h5
+*.joblib
+*.pkl
+
+# ── JSONs generados en runtime ────────────────────────────
+volatility-api/app/baselines.json
+volatility-api/app/training_stats.json
+
+# ── Datos CSV (muy pesados para git) ──────────────────────
+*.csv
+
+# ── Jupyter ───────────────────────────────────────────────
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# ── IDEs ──────────────────────────────────────────────────
+.vscode/
+*.code-workspace
+
+# ── OS ────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Build ─────────────────────────────────────────────────
+*.egg-info/
+dist/
+build/
