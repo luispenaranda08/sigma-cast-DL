@@ -11,6 +11,15 @@ Beyond the baseline scope (REST endpoint + Docker + CI), this service ships with
 
 ---
 
+## 🎥 Demo Video
+
+A short walkthrough of the API in action:
+
+[▶ Watch on YouTube](https://youtu.be/iY-_D5H02NM)
+
+---
+---
+
 ## Architecture
 
 ```
