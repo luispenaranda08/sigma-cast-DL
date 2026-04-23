@@ -1,0 +1,1570 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>🧠 Model Training — Grid Search MLP · RNN · LSTM &#8212; Sigma-Cast</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '3_model_training';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="📊 Model Evaluation — MLP · RNN · LSTM" href="4_model_evaluation.html" />
+    <link rel="prev" title="⚙️ Feature Engineering &amp; Cross-Validation Split" href="2_features_engineering.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Sigma-Cast</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Sigma-Cast: Bitcoin Volatility Forecasting API
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="1_eda_volatility_final.html">🔬 BTC Volatility — Multi-Resolution EDA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_features_engineering.html">⚙️ Feature Engineering &amp; Cross-Validation Split</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">🧠 Model Training — Grid Search MLP · RNN · LSTM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_model_evaluation.html">📊 Model Evaluation — MLP · RNN · LSTM</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/3_model_training.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>🧠 Model Training — Grid Search MLP · RNN · LSTM</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deep-learning-project-bitcoin-volatility-forecasting">Deep Learning Project | Bitcoin Volatility Forecasting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verificacion-de-gpu">0. Verificación de GPU</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cargar-features-pkl">1. Cargar features.pkl</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metricas-y-bds-test">2. Metricas y BDS test</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuracion-del-grid-search">3. Configuracion del grid search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constructores-mlp-rnn-lstm">4. Constructores — MLP · RNN · LSTM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#funcion-de-grid-search">5. Funcion de grid search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preparar-datos-fold-0-lag-14d">6. Preparar datos — fold 0, lag=14d</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grid-search-con-checkpoints">7. Grid search con checkpoints</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#seleccion-automatica-de-arquitecturas">8. Seleccion automatica de arquitecturas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluacion-completa-5-folds-4-lags-3-modelos">9. Evaluacion completa — 5 folds × 4 lags × 3 modelos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabla-comparativa-y-tablas-por-fold">10. Tabla comparativa y tablas por fold</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#guardar-mejor-modelo">11. Guardar mejor modelo</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="model-training-grid-search-mlp-rnn-lstm">
+<h1>🧠 Model Training — Grid Search MLP · RNN · LSTM<a class="headerlink" href="#model-training-grid-search-mlp-rnn-lstm" title="Permalink to this heading">#</a></h1>
+<section id="deep-learning-project-bitcoin-volatility-forecasting">
+<h2>Deep Learning Project | Bitcoin Volatility Forecasting<a class="headerlink" href="#deep-learning-project-bitcoin-volatility-forecasting" title="Permalink to this heading">#</a></h2>
+<p><strong>Estrategia:</strong> Grid search sobre fold 0, lag=14d para seleccionar arquitectura por tipo.<br />
+La ganadora se evalúa en los <strong>5 folds completos</strong> con las métricas del enunciado.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Componente</p></th>
+<th class="head"><p>Detalle</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Tipos</p></td>
+<td><p>MLP · RNN · LSTM</p></td>
+</tr>
+<tr class="row-odd"><td><p>Neuronas/capa</p></td>
+<td><p>32 · 64 · 128 · 256</p></td>
+</tr>
+<tr class="row-even"><td><p>Máx. capas</p></td>
+<td><p>3</p></td>
+</tr>
+<tr class="row-odd"><td><p>Dropout</p></td>
+<td><p>on/off por capa — rate=0.3</p></td>
+</tr>
+<tr class="row-even"><td><p>Selección</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gap_ratio</span> <span class="pre">&lt;</span> <span class="pre">0.15</span></code>, ordenado por <code class="docutils literal notranslate"><span class="pre">best_val_rmse</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Evaluación final</p></td>
+<td><p>5 folds × 4 lags × métricas + BDS test</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="verificacion-de-gpu">
+<h2>0. Verificación de GPU<a class="headerlink" href="#verificacion-de-gpu" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;TF_CPP_MIN_LOG_LEVEL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;3&#39;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TensorFlow version: </span><span class="si">{</span><span class="n">tf</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="n">devices</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">list_physical_devices</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dispositivos detectados:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">gpus</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">list_physical_devices</span><span class="p">(</span><span class="s1">&#39;GPU&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">gpus</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">✅ GPU ACTIVA — </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">gpus</span><span class="p">)</span><span class="si">}</span><span class="s2"> dispositivo(s):&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gpus</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   </span><span class="si">{</span><span class="n">g</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">⚠️  Sin GPU detectada — corriendo en CPU&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   Si tienes DirectML instalado, verifica que el kernel sea &#39;Deep Learning (GPU)&#39;&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   El grid search tardará varias horas en CPU.&quot;</span><span class="p">)</span>
+    <span class="n">respuesta</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">¿Deseas continuar de todas formas? (s/n): &quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">respuesta</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;s&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="s2">&quot;Ejecución cancelada. Configura la GPU antes de continuar.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>TensorFlow version: 2.10.0
+
+Dispositivos detectados:
+  PhysicalDevice(name=&#39;/physical_device:CPU:0&#39;, device_type=&#39;CPU&#39;)
+  PhysicalDevice(name=&#39;/physical_device:GPU:0&#39;, device_type=&#39;GPU&#39;)
+  PhysicalDevice(name=&#39;/physical_device:GPU:1&#39;, device_type=&#39;GPU&#39;)
+
+✅ GPU ACTIVA — 2 dispositivo(s):
+   /physical_device:GPU:0
+   /physical_device:GPU:1
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span><span class="o">,</span><span class="w"> </span><span class="nn">warnings</span><span class="o">,</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+
+<span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;results&#39;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ Imports completos&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✅ Imports completos
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="cargar-features-pkl">
+<h2>1. Cargar features.pkl<a class="headerlink" href="#cargar-features-pkl" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;features.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="n">splits</span>           <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;splits&#39;</span><span class="p">]</span>
+<span class="n">LAGS_LIST</span>        <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;lags_list&#39;</span><span class="p">]</span>
+<span class="n">N_STEPS_FORECAST</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;n_steps_forecast&#39;</span><span class="p">]</span>
+<span class="n">TARGET_COL</span>       <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;target_col&#39;</span><span class="p">]</span>
+<span class="n">time_series</span>      <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;time_series&#39;</span><span class="p">]</span>
+<span class="n">dates</span>            <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;dates&#39;</span><span class="p">]</span>
+
+<span class="n">GRID_LAG</span>  <span class="o">=</span> <span class="mi">14</span>
+<span class="n">GRID_FOLD</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Lags     : </span><span class="si">{</span><span class="n">LAGS_LIST</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Horizonte: </span><span class="si">{</span><span class="n">N_STEPS_FORECAST</span><span class="si">}</span><span class="s2"> dias&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Grid search: lag=</span><span class="si">{</span><span class="n">GRID_LAG</span><span class="si">}</span><span class="s2">d, fold=</span><span class="si">{</span><span class="n">GRID_FOLD</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Lags     : [7, 14, 21, 28]
+Horizonte: 7 dias
+Grid search: lag=14d, fold=0
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="metricas-y-bds-test">
+<h2>2. Metricas y BDS test<a class="headerlink" href="#metricas-y-bds-test" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">mape</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">y_true</span> <span class="o">!=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">y_true</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">-</span><span class="n">y_pred</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span><span class="o">/</span><span class="n">y_true</span><span class="p">[</span><span class="n">mask</span><span class="p">]))</span><span class="o">*</span><span class="mi">100</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">mae</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>  <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_true</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rmse</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span> <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">y_true</span><span class="o">-</span><span class="n">y_pred</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mse</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>  <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">y_true</span><span class="o">-</span><span class="n">y_pred</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">metrics_per_horizon</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">y_true</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">H</span><span class="p">):</span>
+        <span class="n">yt</span><span class="p">,</span> <span class="n">yp</span> <span class="o">=</span> <span class="n">y_true</span><span class="p">[:,</span><span class="n">h</span><span class="p">],</span> <span class="n">y_pred</span><span class="p">[:,</span><span class="n">h</span><span class="p">]</span>
+        <span class="n">result</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;h</span><span class="si">{</span><span class="n">h</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;MAPE&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">mape</span><span class="p">(</span><span class="n">yt</span><span class="p">,</span><span class="n">yp</span><span class="p">),</span><span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;MAE&#39;</span><span class="p">:</span>  <span class="nb">round</span><span class="p">(</span><span class="n">mae</span><span class="p">(</span><span class="n">yt</span><span class="p">,</span><span class="n">yp</span><span class="p">),</span><span class="mi">6</span><span class="p">),</span>
+            <span class="s1">&#39;RMSE&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">rmse</span><span class="p">(</span><span class="n">yt</span><span class="p">,</span><span class="n">yp</span><span class="p">),</span><span class="mi">6</span><span class="p">),</span> <span class="s1">&#39;MSE&#39;</span><span class="p">:</span>  <span class="nb">round</span><span class="p">(</span><span class="n">mse</span><span class="p">(</span><span class="n">yt</span><span class="p">,</span><span class="n">yp</span><span class="p">),</span><span class="mi">8</span><span class="p">),</span>
+        <span class="p">}</span>
+    <span class="n">result</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">k</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">result</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;h</span><span class="si">{</span><span class="n">h</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">H</span><span class="p">)]),</span><span class="mi">6</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;MAPE&#39;</span><span class="p">,</span><span class="s1">&#39;MAE&#39;</span><span class="p">,</span><span class="s1">&#39;RMSE&#39;</span><span class="p">,</span><span class="s1">&#39;MSE&#39;</span><span class="p">]</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">bds_test</span><span class="p">(</span><span class="n">residuals</span><span class="p">,</span> <span class="n">max_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">eps_scale</span><span class="o">=</span><span class="mf">0.7</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">residuals</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">);</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="n">eps</span> <span class="o">=</span> <span class="n">eps_scale</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">c1_fn</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+        <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span> <span class="n">cnt</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span><span class="o">-</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">&lt;=</span><span class="n">eps</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">cnt</span><span class="o">/</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">c1</span> <span class="o">=</span> <span class="n">c1_fn</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_dim</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">em</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">n</span><span class="o">-</span><span class="n">m</span><span class="o">+</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)]);</span> <span class="n">nr</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">em</span><span class="p">)</span>
+        <span class="n">cnt_m</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nr</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span> <span class="n">cnt_m</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">em</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span><span class="o">-</span><span class="n">em</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">&lt;=</span><span class="n">eps</span><span class="p">)</span>
+        <span class="n">cm</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">cnt_m</span><span class="o">/</span><span class="p">(</span><span class="n">nr</span><span class="o">*</span><span class="p">(</span><span class="n">nr</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">k_sum</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">c1</span><span class="o">**</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">m</span><span class="o">-</span><span class="n">j</span><span class="p">))</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">m</span><span class="p">))</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="o">/</span><span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">k_sum</span><span class="o">+</span><span class="p">(</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">c1</span><span class="o">**</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">))</span>
+        <span class="n">stat</span> <span class="o">=</span> <span class="p">(</span><span class="n">cm</span><span class="o">-</span><span class="n">c1</span><span class="o">**</span><span class="n">m</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">var</span><span class="p">,</span><span class="mf">1e-12</span><span class="p">))</span>
+        <span class="n">results</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;statistic&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">stat</span><span class="p">),</span><span class="mi">4</span><span class="p">),</span>
+                      <span class="s1">&#39;p_value&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">stat</span><span class="p">)))),</span><span class="mi">4</span><span class="p">)}</span>
+    <span class="k">return</span> <span class="n">results</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ Metricas y BDS listos&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✅ Metricas y BDS listos
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="configuracion-del-grid-search">
+<h2>3. Configuracion del grid search<a class="headerlink" href="#configuracion-del-grid-search" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">neuronas</span>     <span class="o">=</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span>
+<span class="n">max_capas</span>    <span class="o">=</span> <span class="mi">3</span>
+<span class="n">DROPOUT_RATE</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="n">EPOCHS</span>       <span class="o">=</span> <span class="mi">50</span>
+<span class="n">BATCH_SIZE</span>   <span class="o">=</span> <span class="mi">32</span>
+<span class="n">PATIENCE</span>     <span class="o">=</span> <span class="mi">10</span>
+
+<span class="n">arquitecturas</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">n_capas</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_capas</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">comb</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">neuronas</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="n">n_capas</span><span class="p">):</span>
+        <span class="n">arquitecturas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comb</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">dropout_configs</span><span class="p">(</span><span class="n">n_capas</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">n_capas</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">bool</span><span class="p">((</span><span class="n">mask</span><span class="o">&gt;&gt;</span><span class="n">i</span><span class="p">)</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_capas</span><span class="p">))</span>
+
+<span class="n">total_configs</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">arquitecturas</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Arquitecturas unicas : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">arquitecturas</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Configs arch+dropout : </span><span class="si">{</span><span class="n">total_configs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total grid (3 tipos) : </span><span class="si">{</span><span class="n">total_configs</span><span class="o">*</span><span class="mi">3</span><span class="si">}</span><span class="s2"> entrenamientos&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Arquitecturas unicas : 84
+Configs arch+dropout : 584
+Total grid (3 tipos) : 1752 entrenamientos
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="constructores-mlp-rnn-lstm">
+<h2>4. Constructores — MLP · RNN · LSTM<a class="headerlink" href="#constructores-mlp-rnn-lstm" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">build_mlp</span><span class="p">(</span><span class="n">arch</span><span class="p">,</span> <span class="n">dmask</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,)))</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">units</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">arch</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">dmask</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">DROPOUT_RATE</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">output_dim</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">&#39;mse&#39;</span><span class="p">,</span>
+                  <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">RootMeanSquaredError</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;rmse&#39;</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">model</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">build_rnn</span><span class="p">(</span><span class="n">arch</span><span class="p">,</span> <span class="n">dmask</span><span class="p">,</span> <span class="n">timesteps</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">timesteps</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">units</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">arch</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">SimpleRNN</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="n">return_sequences</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">dmask</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">DROPOUT_RATE</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">SimpleRNN</span><span class="p">(</span><span class="n">arch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">return_sequences</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">dmask</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">DROPOUT_RATE</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">output_dim</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">&#39;mse&#39;</span><span class="p">,</span>
+                  <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">RootMeanSquaredError</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;rmse&#39;</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">model</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">build_lstm</span><span class="p">(</span><span class="n">arch</span><span class="p">,</span> <span class="n">dmask</span><span class="p">,</span> <span class="n">timesteps</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">timesteps</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">units</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">arch</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">LSTM</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="n">return_sequences</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">dmask</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">DROPOUT_RATE</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">LSTM</span><span class="p">(</span><span class="n">arch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">return_sequences</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">dmask</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">DROPOUT_RATE</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">output_dim</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">&#39;mse&#39;</span><span class="p">,</span>
+                  <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">RootMeanSquaredError</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;rmse&#39;</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">model</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ Constructores listos: MLP / RNN / LSTM&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✅ Constructores listos: MLP / RNN / LSTM
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="funcion-de-grid-search">
+<h2>5. Funcion de grid search<a class="headerlink" href="#funcion-de-grid-search" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span><span class="o">,</span><span class="w"> </span><span class="nn">gc</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_grid_search</span><span class="p">(</span><span class="n">model_type</span><span class="p">,</span> <span class="n">X_tr</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">y_val</span><span class="p">,</span> <span class="n">input_lag</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">,</span>
+                    <span class="n">checkpoint_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">checkpoint_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">partial_results</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">checkpoint_every</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Grid search con reanudacion y checkpoint incremental atomico.</span>
+
+<span class="sd">    - partial_results: lista de dicts ya evaluados. Se reanuda en len(partial_results).</span>
+<span class="sd">    - checkpoint_file / checkpoint_key: si se proveen, persiste cada checkpoint_every.</span>
+<span class="sd">    - checkpoint_every: cada cuantas configs reportar progreso y guardar checkpoint.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Lista plana de configs: se indexa por posicion para reanudar facil.</span>
+    <span class="n">all_configs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">arch</span><span class="p">,</span> <span class="n">dmask</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="n">arch</span> <span class="ow">in</span> <span class="n">arquitecturas</span>
+                   <span class="k">for</span> <span class="n">dmask</span> <span class="ow">in</span> <span class="n">dropout_configs</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arch</span><span class="p">))]</span>
+    <span class="n">n_total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_configs</span><span class="p">)</span>
+
+    <span class="n">resultados</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">partial_results</span><span class="p">)</span> <span class="k">if</span> <span class="n">partial_results</span> <span class="k">else</span> <span class="p">[]</span>
+    <span class="n">start_idx</span>  <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">resultados</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">start_idx</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">model_type</span><span class="si">}</span><span class="s2">] Reanudando desde config </span><span class="si">{</span><span class="n">start_idx</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">n_total</span><span class="si">}</span><span class="s2"> &quot;</span>
+              <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">n_total</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_idx</span><span class="si">}</span><span class="s2"> restantes)&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">start_idx</span> <span class="o">==</span> <span class="n">n_total</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">model_type</span><span class="si">}</span><span class="s2">] Ya tenia </span><span class="si">{</span><span class="n">n_total</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">n_total</span><span class="si">}</span><span class="s2"> — nada que correr.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">resultados</span><span class="p">)</span>
+
+    <span class="n">es</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">EarlyStopping</span><span class="p">(</span>
+        <span class="n">monitor</span><span class="o">=</span><span class="s1">&#39;val_loss&#39;</span><span class="p">,</span> <span class="n">patience</span><span class="o">=</span><span class="n">PATIENCE</span><span class="p">,</span> <span class="n">restore_best_weights</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">model_type</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;RNN&#39;</span><span class="p">,</span> <span class="s1">&#39;LSTM&#39;</span><span class="p">):</span>
+        <span class="n">X_tr_in</span>  <span class="o">=</span> <span class="n">X_tr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">input_lag</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">X_val_in</span> <span class="o">=</span> <span class="n">X_val</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">input_lag</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">X_tr_in</span><span class="p">,</span> <span class="n">X_val_in</span> <span class="o">=</span> <span class="n">X_tr</span><span class="p">,</span> <span class="n">X_val</span>
+
+    <span class="n">block_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_idx</span><span class="p">,</span> <span class="n">n_total</span><span class="p">):</span>
+        <span class="n">arch</span><span class="p">,</span> <span class="n">dmask</span> <span class="o">=</span> <span class="n">all_configs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">clear_session</span><span class="p">()</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+        <span class="k">if</span>   <span class="n">model_type</span> <span class="o">==</span> <span class="s1">&#39;MLP&#39;</span><span class="p">:</span>  <span class="n">model</span> <span class="o">=</span> <span class="n">build_mlp</span><span class="p">(</span><span class="n">arch</span><span class="p">,</span> <span class="n">dmask</span><span class="p">,</span> <span class="n">input_lag</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s1">&#39;RNN&#39;</span><span class="p">:</span>  <span class="n">model</span> <span class="o">=</span> <span class="n">build_rnn</span><span class="p">(</span><span class="n">arch</span><span class="p">,</span> <span class="n">dmask</span><span class="p">,</span> <span class="n">input_lag</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>                      <span class="n">model</span> <span class="o">=</span> <span class="n">build_lstm</span><span class="p">(</span><span class="n">arch</span><span class="p">,</span> <span class="n">dmask</span><span class="p">,</span> <span class="n">input_lag</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span>
+
+        <span class="n">history</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+            <span class="n">X_tr_in</span><span class="p">,</span> <span class="n">y_tr</span><span class="p">,</span>
+            <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">X_val_in</span><span class="p">,</span> <span class="n">y_val</span><span class="p">),</span>
+            <span class="n">epochs</span><span class="o">=</span><span class="n">EPOCHS</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span>
+            <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">es</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">train_rmse</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;rmse&#39;</span><span class="p">]</span>
+        <span class="n">val_rmse</span>   <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;val_rmse&#39;</span><span class="p">]</span>
+        <span class="n">best_val</span>   <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">val_rmse</span><span class="p">))</span>
+        <span class="n">last_train</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">train_rmse</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">gap</span>        <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">last_train</span> <span class="o">-</span> <span class="n">best_val</span><span class="p">)</span>
+        <span class="n">gap_ratio</span>  <span class="o">=</span> <span class="n">gap</span> <span class="o">/</span> <span class="n">best_val</span> <span class="k">if</span> <span class="n">best_val</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">999.0</span>
+
+        <span class="n">resultados</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;model_type&#39;</span><span class="p">:</span>      <span class="n">model_type</span><span class="p">,</span>
+            <span class="s1">&#39;arquitectura&#39;</span><span class="p">:</span>    <span class="n">arch</span><span class="p">,</span>
+            <span class="s1">&#39;dropout_mask&#39;</span><span class="p">:</span>    <span class="n">dmask</span><span class="p">,</span>
+            <span class="s1">&#39;best_val_rmse&#39;</span><span class="p">:</span>   <span class="nb">round</span><span class="p">(</span><span class="n">best_val</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+            <span class="s1">&#39;last_train_rmse&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">last_train</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+            <span class="s1">&#39;gap&#39;</span><span class="p">:</span>             <span class="nb">round</span><span class="p">(</span><span class="n">gap</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+            <span class="s1">&#39;gap_ratio&#39;</span><span class="p">:</span>       <span class="nb">round</span><span class="p">(</span><span class="n">gap_ratio</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+            <span class="s1">&#39;epochs_run&#39;</span><span class="p">:</span>      <span class="nb">len</span><span class="p">(</span><span class="n">train_rmse</span><span class="p">),</span>
+            <span class="s1">&#39;train_curve&#39;</span><span class="p">:</span>     <span class="n">train_rmse</span><span class="p">,</span>
+            <span class="s1">&#39;val_curve&#39;</span><span class="p">:</span>       <span class="n">val_rmse</span><span class="p">,</span>
+        <span class="p">})</span>
+
+        <span class="c1"># Contra el memory leak de TF 2.10 + DirectML en loops largos de modelos</span>
+        <span class="k">del</span> <span class="n">model</span><span class="p">,</span> <span class="n">history</span>
+
+        <span class="n">done</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">done</span> <span class="o">%</span> <span class="n">checkpoint_every</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">done</span> <span class="o">==</span> <span class="n">n_total</span><span class="p">:</span>
+            <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">block_start</span>
+            <span class="n">n_block</span> <span class="o">=</span> <span class="n">checkpoint_every</span> <span class="k">if</span> <span class="n">done</span> <span class="o">%</span> <span class="n">checkpoint_every</span> <span class="o">==</span> <span class="mi">0</span> \
+                      <span class="k">else</span> <span class="p">(</span><span class="n">done</span> <span class="o">-</span> <span class="p">(</span><span class="n">done</span> <span class="o">//</span> <span class="n">checkpoint_every</span><span class="p">)</span> <span class="o">*</span> <span class="n">checkpoint_every</span><span class="p">)</span>
+            <span class="n">n_block</span> <span class="o">=</span> <span class="n">n_block</span> <span class="ow">or</span> <span class="n">checkpoint_every</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">model_type</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">done</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">n_total</span><span class="si">}</span><span class="s2"> | &quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;+</span><span class="si">{</span><span class="n">n_block</span><span class="si">}</span><span class="s2"> configs en </span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">s &quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">elapsed</span><span class="o">/</span><span class="n">n_block</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s/config)&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">checkpoint_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">checkpoint_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Releer el checkpoint actual para no perder otras claves</span>
+                <span class="n">current</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">checkpoint_file</span><span class="p">):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">checkpoint_file</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                            <span class="n">current</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                        <span class="n">current</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">current</span><span class="p">[</span><span class="n">checkpoint_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;results&#39;</span><span class="p">:</span>  <span class="n">resultados</span><span class="p">,</span>
+                    <span class="s1">&#39;complete&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="c1"># Escritura atomica: si crashea a mitad del dump, el archivo</span>
+                <span class="c1"># final nunca queda corrupto porque os.replace es atomico.</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">checkpoint_file</span> <span class="o">+</span> <span class="s1">&#39;.tmp&#39;</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">checkpoint_file</span><span class="p">)</span>
+
+            <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+            <span class="n">block_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">resultados</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\u2705</span><span class="s2"> Funcion grid search lista (con reanudacion + checkpoint atomico)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✅ Funcion grid search lista (con reanudacion + checkpoint atomico)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="preparar-datos-fold-0-lag-14d">
+<h2>6. Preparar datos — fold 0, lag=14d<a class="headerlink" href="#preparar-datos-fold-0-lag-14d" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sp</span> <span class="o">=</span> <span class="n">splits</span><span class="p">[</span><span class="n">GRID_LAG</span><span class="p">]</span>
+
+<span class="n">X_tr_raw</span>  <span class="o">=</span> <span class="n">sp</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">][</span><span class="n">GRID_FOLD</span><span class="p">];</span>    <span class="n">y_tr_raw</span>  <span class="o">=</span> <span class="n">sp</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">][</span><span class="n">GRID_FOLD</span><span class="p">]</span>
+<span class="n">X_val_raw</span> <span class="o">=</span> <span class="n">sp</span><span class="p">[</span><span class="s1">&#39;Xcv&#39;</span><span class="p">][</span><span class="n">GRID_FOLD</span><span class="p">];</span>  <span class="n">y_val_raw</span> <span class="o">=</span> <span class="n">sp</span><span class="p">[</span><span class="s1">&#39;ycv&#39;</span><span class="p">][</span><span class="n">GRID_FOLD</span><span class="p">]</span>
+
+<span class="n">sx</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_tr_raw</span><span class="p">)</span>
+<span class="n">sy</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">y_tr_raw</span><span class="p">)</span>
+
+<span class="n">X_tr_s</span>  <span class="o">=</span> <span class="n">sx</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_tr_raw</span><span class="p">)</span>
+<span class="n">X_val_s</span> <span class="o">=</span> <span class="n">sx</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_val_raw</span><span class="p">)</span>
+<span class="n">y_tr_s</span>  <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">y_tr_raw</span><span class="p">)</span>
+<span class="n">y_val_s</span> <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">y_val_raw</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Train : </span><span class="si">{</span><span class="n">X_tr_s</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">y_tr_s</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Val   : </span><span class="si">{</span><span class="n">X_val_s</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">y_val_s</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Train : (175, 14) -&gt; (175, 7)
+Val   : (58, 14) -&gt; (58, 7)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="grid-search-con-checkpoints">
+<h2>7. Grid search con checkpoints<a class="headerlink" href="#grid-search-con-checkpoints" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="n">CHECKPOINT_FILE</span>  <span class="o">=</span> <span class="s1">&#39;grid_results_checkpoint.pkl&#39;</span>
+<span class="n">CHECKPOINT_EVERY</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_save_cp_atomic</span><span class="p">(</span><span class="n">cp</span><span class="p">):</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">CHECKPOINT_FILE</span> <span class="o">+</span> <span class="s1">&#39;.tmp&#39;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">CHECKPOINT_FILE</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_complete</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">mtype</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">mtype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cp</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">cp</span><span class="p">[</span><span class="n">mtype</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;complete&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># DataFrame legacy del checkpoint anterior: se considera completo</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_partial</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">mtype</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">mtype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cp</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">cp</span><span class="p">[</span><span class="n">mtype</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;complete&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;results&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+<span class="c1"># --- Cargar checkpoint existente y reportar estado</span>
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">CHECKPOINT_FILE</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">CHECKPOINT_FILE</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\u2705</span><span class="s2"> Checkpoint cargado. Estado por modelo:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;MLP&#39;</span><span class="p">,</span> <span class="s1">&#39;RNN&#39;</span><span class="p">,</span> <span class="s1">&#39;LSTM&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">checkpoint</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   </span><span class="si">{</span><span class="n">m</span><span class="si">:</span><span class="s2">4s</span><span class="si">}</span><span class="s2">: no existe&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">n</span>  <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;results&#39;</span><span class="p">,</span> <span class="p">[]))</span>
+                <span class="n">st</span> <span class="o">=</span> <span class="s1">&#39;COMPLETO&#39;</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;complete&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;PARCIAL&#39;</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   </span><span class="si">{</span><span class="n">m</span><span class="si">:</span><span class="s2">4s</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">st</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> configs)&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   </span><span class="si">{</span><span class="n">m</span><span class="si">:</span><span class="s2">4s</span><span class="si">}</span><span class="s2">: legacy DataFrame (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2"> filas) </span><span class="se">\u2192</span><span class="s2"> completo&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">checkpoint</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No hay checkpoint. Empezando desde cero.&quot;</span><span class="p">)</span>
+
+<span class="c1"># --- MLP: hardcodeado del run anterior (NO se reentrena)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">_is_complete</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="s1">&#39;MLP&#39;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">MLP </span><span class="se">\u2014</span><span class="s2"> cargando resultado conocido del run anterior...&quot;</span><span class="p">)</span>
+    <span class="n">mlp_row</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;model_type&#39;</span><span class="p">:</span>      <span class="s1">&#39;MLP&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;arquitectura&#39;</span><span class="p">:</span>    <span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span>
+        <span class="s1">&#39;dropout_mask&#39;</span><span class="p">:</span>    <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="s1">&#39;best_val_rmse&#39;</span><span class="p">:</span>   <span class="mf">0.56112</span><span class="p">,</span>
+        <span class="s1">&#39;last_train_rmse&#39;</span><span class="p">:</span> <span class="mf">0.52118</span><span class="p">,</span>
+        <span class="s1">&#39;gap&#39;</span><span class="p">:</span>             <span class="mf">0.03994</span><span class="p">,</span>
+        <span class="s1">&#39;gap_ratio&#39;</span><span class="p">:</span>       <span class="mf">0.071</span><span class="p">,</span>
+        <span class="s1">&#39;epochs_run&#39;</span><span class="p">:</span>      <span class="mi">50</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;MLP&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;results&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">mlp_row</span><span class="p">],</span> <span class="s1">&#39;complete&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">_save_cp_atomic</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">mlp_row</span><span class="p">])</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;results/grid_MLP.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  MLP cargado: arch=(256,128,128) | val_rmse=0.56112 | gap_ratio=0.071&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  CSV: results/grid_MLP.csv&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">MLP ya completo </span><span class="se">\u2014</span><span class="s2"> skipping.&quot;</span><span class="p">)</span>
+
+<span class="c1"># --- RNN y LSTM con reanudacion automatica</span>
+<span class="k">for</span> <span class="n">mtype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;RNN&#39;</span><span class="p">,</span> <span class="s1">&#39;LSTM&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">_is_complete</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">mtype</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">mtype</span><span class="si">}</span><span class="s2"> ya completo </span><span class="se">\u2014</span><span class="s2"> skipping.&quot;</span><span class="p">)</span>
+        <span class="k">continue</span>
+
+    <span class="n">partial</span> <span class="o">=</span> <span class="n">_get_partial</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">mtype</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">60</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">partial</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  GRID SEARCH </span><span class="se">\u2014</span><span class="s2"> </span><span class="si">{</span><span class="n">mtype</span><span class="si">}</span><span class="s2">  (reanudando desde </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">partial</span><span class="p">)</span><span class="si">}</span><span class="s2">/584)&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  GRID SEARCH </span><span class="se">\u2014</span><span class="s2"> </span><span class="si">{</span><span class="n">mtype</span><span class="si">}</span><span class="s2">  (empezando desde 0/584)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">60</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">mtype</span> <span class="o">==</span> <span class="s1">&#39;LSTM&#39;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  [device=/CPU:0] DirectML no implementa CudnnRNN; LSTM corre en CPU.&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;/CPU:0&#39;</span><span class="p">):</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">run_grid_search</span><span class="p">(</span>
+                <span class="n">mtype</span><span class="p">,</span> <span class="n">X_tr_s</span><span class="p">,</span> <span class="n">y_tr_s</span><span class="p">,</span> <span class="n">X_val_s</span><span class="p">,</span> <span class="n">y_val_s</span><span class="p">,</span>
+                <span class="n">input_lag</span><span class="o">=</span><span class="n">GRID_LAG</span><span class="p">,</span> <span class="n">output_dim</span><span class="o">=</span><span class="n">N_STEPS_FORECAST</span><span class="p">,</span>
+                <span class="n">checkpoint_file</span><span class="o">=</span><span class="n">CHECKPOINT_FILE</span><span class="p">,</span> <span class="n">checkpoint_key</span><span class="o">=</span><span class="n">mtype</span><span class="p">,</span>
+                <span class="n">partial_results</span><span class="o">=</span><span class="n">partial</span><span class="p">,</span> <span class="n">checkpoint_every</span><span class="o">=</span><span class="n">CHECKPOINT_EVERY</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">run_grid_search</span><span class="p">(</span>
+            <span class="n">mtype</span><span class="p">,</span> <span class="n">X_tr_s</span><span class="p">,</span> <span class="n">y_tr_s</span><span class="p">,</span> <span class="n">X_val_s</span><span class="p">,</span> <span class="n">y_val_s</span><span class="p">,</span>
+            <span class="n">input_lag</span><span class="o">=</span><span class="n">GRID_LAG</span><span class="p">,</span> <span class="n">output_dim</span><span class="o">=</span><span class="n">N_STEPS_FORECAST</span><span class="p">,</span>
+            <span class="n">checkpoint_file</span><span class="o">=</span><span class="n">CHECKPOINT_FILE</span><span class="p">,</span> <span class="n">checkpoint_key</span><span class="o">=</span><span class="n">mtype</span><span class="p">,</span>
+            <span class="n">partial_results</span><span class="o">=</span><span class="n">partial</span><span class="p">,</span> <span class="n">checkpoint_every</span><span class="o">=</span><span class="n">CHECKPOINT_EVERY</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+
+    <span class="c1"># Marcar completo y persistir</span>
+    <span class="n">checkpoint</span><span class="p">[</span><span class="n">mtype</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;results&#39;</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s1">&#39;records&#39;</span><span class="p">),</span> <span class="s1">&#39;complete&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="n">_save_cp_atomic</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
+
+    <span class="c1"># CSV de respaldo (sin curvas para que sea legible en Notion/Excel)</span>
+    <span class="n">df_csv</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;train_curve&#39;</span><span class="p">,</span> <span class="s1">&#39;val_curve&#39;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+    <span class="n">df_csv</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;results/grid_</span><span class="si">{</span><span class="n">mtype</span><span class="si">}</span><span class="s1">.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">candidatos</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;gap_ratio&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.15</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;best_val_rmse&#39;</span><span class="p">)</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="n">candidatos</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidatos</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> \
+           <span class="k">else</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;best_val_rmse&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="se">\u2705</span><span class="s2"> </span><span class="si">{</span><span class="n">mtype</span><span class="si">}</span><span class="s2"> completo en </span><span class="si">{</span><span class="n">elapsed</span><span class="o">/</span><span class="mi">60</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> min </span><span class="se">\u2014</span><span class="s2"> CSV: results/grid_</span><span class="si">{</span><span class="n">mtype</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Mejor </span><span class="si">{</span><span class="n">mtype</span><span class="si">}</span><span class="s2">: arch=</span><span class="si">{</span><span class="n">best</span><span class="p">[</span><span class="s1">&#39;arquitectura&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> | &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;dropout=</span><span class="si">{</span><span class="n">best</span><span class="p">[</span><span class="s1">&#39;dropout_mask&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> | &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;val_rmse=</span><span class="si">{</span><span class="n">best</span><span class="p">[</span><span class="s1">&#39;best_val_rmse&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> | gap_ratio=</span><span class="si">{</span><span class="n">best</span><span class="p">[</span><span class="s1">&#39;gap_ratio&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># --- Reconstruir grid_results como DataFrames (para seccion 8 siguiente)</span>
+<span class="n">grid_results</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">mtype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;MLP&#39;</span><span class="p">,</span> <span class="s1">&#39;RNN&#39;</span><span class="p">,</span> <span class="s1">&#39;LSTM&#39;</span><span class="p">]:</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="n">mtype</span><span class="p">]</span>
+    <span class="n">grid_results</span><span class="p">[</span><span class="n">mtype</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">])</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="n">v</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\u2705</span><span class="s2"> Grid search completo para los 3 modelos&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✅ Checkpoint cargado. Estado por modelo:
+   MLP : legacy DataFrame (1 filas) → completo
+   RNN : COMPLETO (584 configs)
+   LSTM: PARCIAL (470 configs)
+
+MLP ya completo — skipping.
+
+RNN ya completo — skipping.
+
+============================================================
+  GRID SEARCH — LSTM  (reanudando desde 470/584)
+============================================================
+  [device=/CPU:0] DirectML no implementa CudnnRNN; LSTM corre en CPU.
+  [LSTM] Reanudando desde config 470/584 (114 restantes)
+  [LSTM] 480/584 | +10 configs en 310.1s (31.01s/config)
+  [LSTM] 490/584 | +10 configs en 555.8s (55.58s/config)
+  [LSTM] 500/584 | +10 configs en 404.7s (40.47s/config)
+  [LSTM] 510/584 | +10 configs en 445.5s (44.55s/config)
+  [LSTM] 520/584 | +10 configs en 549.7s (54.97s/config)
+  [LSTM] 530/584 | +10 configs en 512.2s (51.22s/config)
+  [LSTM] 540/584 | +10 configs en 413.6s (41.36s/config)
+  [LSTM] 550/584 | +10 configs en 391.5s (39.15s/config)
+  [LSTM] 560/584 | +10 configs en 402.0s (40.20s/config)
+  [LSTM] 570/584 | +10 configs en 457.8s (45.78s/config)
+  [LSTM] 580/584 | +10 configs en 534.7s (53.47s/config)
+  [LSTM] 584/584 | +4 configs en 186.8s (46.71s/config)
+  ✅ LSTM completo en 86.2 min — CSV: results/grid_LSTM.csv
+  Mejor LSTM: arch=(32,) | dropout=(True,) | val_rmse=0.56483 | gap_ratio=0.444
+
+✅ Grid search completo para los 3 modelos
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="seleccion-automatica-de-arquitecturas">
+<h2>8. Seleccion automatica de arquitecturas<a class="headerlink" href="#seleccion-automatica-de-arquitecturas" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">best_configs</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Arquitecturas seleccionadas:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">mtype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;MLP&#39;</span><span class="p">,</span> <span class="s1">&#39;RNN&#39;</span><span class="p">,</span> <span class="s1">&#39;LSTM&#39;</span><span class="p">]:</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">grid_results</span><span class="p">[</span><span class="n">mtype</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;gap_ratio&#39;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">candidatos</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;gap_ratio&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.15</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;best_val_rmse&#39;</span><span class="p">)</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">candidatos</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidatos</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;best_val_rmse&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">best_configs</span><span class="p">[</span><span class="n">mtype</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;arquitectura&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;arquitectura&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;dropout_mask&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;dropout_mask&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;best_val_rmse&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;best_val_rmse&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;gap_ratio&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;gap_ratio&#39;</span><span class="p">],</span>
+    <span class="p">}</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">mtype</span><span class="si">:</span><span class="s2">4s</span><span class="si">}</span><span class="s2"> -&gt; arch=</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;arquitectura&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> | &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;dropout=</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;dropout_mask&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> | &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;val_rmse=</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;best_val_rmse&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> | gap_ratio=</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;gap_ratio&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Arquitecturas seleccionadas:
+  MLP  -&gt; arch=(256, 128, 128) | dropout=(False, False, False) | val_rmse=0.56112 | gap_ratio=0.071
+  RNN  -&gt; arch=(64, 32, 64) | dropout=(True, False, False) | val_rmse=0.58023 | gap_ratio=0.148
+  LSTM -&gt; arch=(32,) | dropout=(True,) | val_rmse=0.56483 | gap_ratio=0.444
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="evaluacion-completa-5-folds-4-lags-3-modelos">
+<h2>9. Evaluacion completa — 5 folds × 4 lags × 3 modelos<a class="headerlink" href="#evaluacion-completa-5-folds-4-lags-3-modelos" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+
+<span class="n">results_all</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">for</span> <span class="n">mtype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;MLP&#39;</span><span class="p">,</span> <span class="s1">&#39;RNN&#39;</span><span class="p">,</span> <span class="s1">&#39;LSTM&#39;</span><span class="p">]:</span>
+    <span class="n">arch</span>   <span class="o">=</span> <span class="n">best_configs</span><span class="p">[</span><span class="n">mtype</span><span class="p">][</span><span class="s1">&#39;arquitectura&#39;</span><span class="p">]</span>
+    <span class="n">dmask</span>  <span class="o">=</span> <span class="n">best_configs</span><span class="p">[</span><span class="n">mtype</span><span class="p">][</span><span class="s1">&#39;dropout_mask&#39;</span><span class="p">]</span>
+    <span class="n">_device</span> <span class="o">=</span> <span class="s1">&#39;/CPU:0&#39;</span> <span class="k">if</span> <span class="n">mtype</span> <span class="o">==</span> <span class="s1">&#39;LSTM&#39;</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">results_all</span><span class="p">[</span><span class="n">mtype</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">60</span><span class="si">}</span><span class="se">\n</span><span class="s2">  </span><span class="si">{</span><span class="n">mtype</span><span class="si">}</span><span class="s2"> — arch=</span><span class="si">{</span><span class="n">arch</span><span class="si">}</span><span class="s2"> | dropout=</span><span class="si">{</span><span class="n">dmask</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">60</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">lag</span> <span class="ow">in</span> <span class="n">LAGS_LIST</span><span class="p">:</span>
+        <span class="n">sp</span> <span class="o">=</span> <span class="n">splits</span><span class="p">[</span><span class="n">lag</span><span class="p">]</span>
+        <span class="n">folds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sp</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">results_all</span><span class="p">[</span><span class="n">mtype</span><span class="p">][</span><span class="n">lag</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">fold</span> <span class="ow">in</span> <span class="n">folds</span><span class="p">:</span>
+            <span class="n">X_tr_r</span>  <span class="o">=</span> <span class="n">sp</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">][</span><span class="n">fold</span><span class="p">];</span>    <span class="n">y_tr_r</span>  <span class="o">=</span> <span class="n">sp</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">][</span><span class="n">fold</span><span class="p">]</span>
+            <span class="n">X_val_r</span> <span class="o">=</span> <span class="n">sp</span><span class="p">[</span><span class="s1">&#39;Xcv&#39;</span><span class="p">][</span><span class="n">fold</span><span class="p">];</span>  <span class="n">y_val_r</span> <span class="o">=</span> <span class="n">sp</span><span class="p">[</span><span class="s1">&#39;ycv&#39;</span><span class="p">][</span><span class="n">fold</span><span class="p">]</span>
+            <span class="n">X_te_r</span>  <span class="o">=</span> <span class="n">sp</span><span class="p">[</span><span class="s1">&#39;Xtest&#39;</span><span class="p">][</span><span class="n">fold</span><span class="p">];</span><span class="n">y_te_r</span>  <span class="o">=</span> <span class="n">sp</span><span class="p">[</span><span class="s1">&#39;ytest&#39;</span><span class="p">][</span><span class="n">fold</span><span class="p">]</span>
+
+            <span class="n">sx</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_tr_r</span><span class="p">)</span>
+            <span class="n">sy</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">y_tr_r</span><span class="p">)</span>
+
+            <span class="n">X_tr_s</span>  <span class="o">=</span> <span class="n">sx</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_tr_r</span><span class="p">);</span>  <span class="n">X_val_s</span> <span class="o">=</span> <span class="n">sx</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_val_r</span><span class="p">)</span>
+            <span class="n">X_te_s</span>  <span class="o">=</span> <span class="n">sx</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_te_r</span><span class="p">);</span>  <span class="n">y_tr_s</span>  <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">y_tr_r</span><span class="p">)</span>
+            <span class="n">y_val_s</span> <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">y_val_r</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">mtype</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;RNN&#39;</span><span class="p">,</span> <span class="s1">&#39;LSTM&#39;</span><span class="p">):</span>
+                <span class="n">X_tr_in</span>  <span class="o">=</span> <span class="n">X_tr_s</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">lag</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">X_val_in</span> <span class="o">=</span> <span class="n">X_val_s</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">lag</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">X_te_in</span>  <span class="o">=</span> <span class="n">X_te_s</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">lag</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">X_tr_in</span><span class="p">,</span> <span class="n">X_val_in</span><span class="p">,</span> <span class="n">X_te_in</span> <span class="o">=</span> <span class="n">X_tr_s</span><span class="p">,</span> <span class="n">X_val_s</span><span class="p">,</span> <span class="n">X_te_s</span>
+
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">clear_session</span><span class="p">();</span> <span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+            <span class="k">if</span>   <span class="n">mtype</span> <span class="o">==</span> <span class="s1">&#39;MLP&#39;</span><span class="p">:</span>  <span class="n">model</span> <span class="o">=</span> <span class="n">build_mlp</span><span class="p">(</span><span class="n">arch</span><span class="p">,</span> <span class="n">dmask</span><span class="p">,</span> <span class="n">lag</span><span class="p">,</span> <span class="n">N_STEPS_FORECAST</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">mtype</span> <span class="o">==</span> <span class="s1">&#39;RNN&#39;</span><span class="p">:</span>  <span class="n">model</span> <span class="o">=</span> <span class="n">build_rnn</span><span class="p">(</span><span class="n">arch</span><span class="p">,</span> <span class="n">dmask</span><span class="p">,</span> <span class="n">lag</span><span class="p">,</span> <span class="n">N_STEPS_FORECAST</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>                 <span class="n">model</span> <span class="o">=</span> <span class="n">build_lstm</span><span class="p">(</span><span class="n">arch</span><span class="p">,</span> <span class="n">dmask</span><span class="p">,</span> <span class="n">lag</span><span class="p">,</span> <span class="n">N_STEPS_FORECAST</span><span class="p">)</span>
+
+            <span class="n">es</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">EarlyStopping</span><span class="p">(</span>
+                <span class="n">monitor</span><span class="o">=</span><span class="s1">&#39;val_loss&#39;</span><span class="p">,</span> <span class="n">patience</span><span class="o">=</span><span class="n">PATIENCE</span><span class="p">,</span> <span class="n">restore_best_weights</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">ctx</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="n">_device</span><span class="p">)</span> <span class="k">if</span> <span class="n">_device</span> <span class="k">else</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">nullcontext</span><span class="p">()</span>
+            <span class="k">with</span> <span class="n">ctx</span><span class="p">:</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_tr_in</span><span class="p">,</span> <span class="n">y_tr_s</span><span class="p">,</span> <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">X_val_in</span><span class="p">,</span> <span class="n">y_val_s</span><span class="p">),</span>
+                          <span class="n">epochs</span><span class="o">=</span><span class="n">EPOCHS</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">es</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+                <span class="n">yhat_tr</span>  <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_tr_in</span><span class="p">,</span>  <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+                <span class="n">yhat_val</span> <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_val_in</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+                <span class="n">yhat_te</span>  <span class="o">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_te_in</span><span class="p">,</span>  <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+            <span class="n">m_test</span>   <span class="o">=</span> <span class="n">metrics_per_horizon</span><span class="p">(</span><span class="n">y_te_r</span><span class="p">,</span> <span class="n">yhat_te</span><span class="p">)</span>
+            <span class="n">resid_h1</span> <span class="o">=</span> <span class="n">y_te_r</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">yhat_te</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">bds_res</span>  <span class="o">=</span> <span class="n">bds_test</span><span class="p">(</span><span class="n">resid_h1</span><span class="p">,</span> <span class="n">max_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">bds_pval</span> <span class="o">=</span> <span class="n">bds_res</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;p_value&#39;</span><span class="p">]</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  lag=</span><span class="si">{</span><span class="n">lag</span><span class="si">}</span><span class="s2">d fold=</span><span class="si">{</span><span class="n">fold</span><span class="si">}</span><span class="s2"> | RMSE=</span><span class="si">{</span><span class="n">m_test</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">][</span><span class="s1">&#39;RMSE&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> | &quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;MAPE=</span><span class="si">{</span><span class="n">m_test</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">][</span><span class="s1">&#39;MAPE&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">% | &quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;BDS p=</span><span class="si">{</span><span class="n">bds_pval</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;OK&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">bds_pval</span><span class="o">&gt;</span><span class="mf">0.05</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;WARN&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">results_all</span><span class="p">[</span><span class="n">mtype</span><span class="p">][</span><span class="n">lag</span><span class="p">][</span><span class="n">fold</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;metrics_test&#39;</span><span class="p">:</span> <span class="n">m_test</span><span class="p">,</span>
+                <span class="s1">&#39;rmse_test&#39;</span><span class="p">:</span>    <span class="n">m_test</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">][</span><span class="s1">&#39;RMSE&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;bds_pval&#39;</span><span class="p">:</span>     <span class="n">bds_pval</span><span class="p">,</span>
+                <span class="s1">&#39;yhat_train&#39;</span><span class="p">:</span>   <span class="n">yhat_tr</span><span class="p">,</span>
+                <span class="s1">&#39;yhat_val&#39;</span><span class="p">:</span>     <span class="n">yhat_val</span><span class="p">,</span>
+                <span class="s1">&#39;yhat_test&#39;</span><span class="p">:</span>    <span class="n">yhat_te</span><span class="p">,</span>
+                <span class="s1">&#39;y_train_raw&#39;</span><span class="p">:</span>  <span class="n">y_tr_r</span><span class="p">,</span>
+                <span class="s1">&#39;y_val_raw&#39;</span><span class="p">:</span>    <span class="n">y_val_r</span><span class="p">,</span>
+                <span class="s1">&#39;y_test_raw&#39;</span><span class="p">:</span>   <span class="n">y_te_r</span><span class="p">,</span>
+                <span class="s1">&#39;resid_h1&#39;</span><span class="p">:</span>     <span class="n">resid_h1</span><span class="p">,</span>
+            <span class="p">}</span>
+
+<span class="c1"># Guardar checkpoint de resultados finales</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;results_all_checkpoint.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">results_all</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">✅ Evaluacion completa — checkpoint guardado en results_all_checkpoint.pkl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>============================================================
+  MLP — arch=(256, 128, 128) | dropout=(False, False, False)
+============================================================
+  lag=7d fold=0 | RMSE=0.2508 | MAPE=40.93% | BDS p=0.912 OK
+  lag=7d fold=1 | RMSE=0.2558 | MAPE=42.34% | BDS p=0.966 OK
+  lag=7d fold=2 | RMSE=0.2435 | MAPE=40.85% | BDS p=0.998 OK
+  lag=7d fold=3 | RMSE=0.2267 | MAPE=40.87% | BDS p=0.943 OK
+  lag=7d fold=4 | RMSE=0.2646 | MAPE=44.02% | BDS p=0.977 OK
+  lag=14d fold=0 | RMSE=0.1971 | MAPE=38.52% | BDS p=0.971 OK
+  lag=14d fold=1 | RMSE=0.2135 | MAPE=44.76% | BDS p=0.909 OK
+  lag=14d fold=2 | RMSE=0.2209 | MAPE=49.45% | BDS p=0.974 OK
+  lag=14d fold=3 | RMSE=0.2135 | MAPE=48.10% | BDS p=0.992 OK
+  lag=14d fold=4 | RMSE=0.2773 | MAPE=45.89% | BDS p=0.977 OK
+  lag=21d fold=0 | RMSE=0.2325 | MAPE=44.24% | BDS p=0.936 OK
+  lag=21d fold=1 | RMSE=0.2349 | MAPE=42.49% | BDS p=0.979 OK
+  lag=21d fold=2 | RMSE=0.2495 | MAPE=41.29% | BDS p=0.863 OK
+  lag=21d fold=3 | RMSE=0.2513 | MAPE=38.86% | BDS p=0.996 OK
+  lag=21d fold=4 | RMSE=0.1934 | MAPE=40.05% | BDS p=0.965 OK
+  lag=28d fold=0 | RMSE=0.2854 | MAPE=42.65% | BDS p=0.991 OK
+  lag=28d fold=1 | RMSE=0.3763 | MAPE=46.63% | BDS p=0.938 OK
+  lag=28d fold=2 | RMSE=0.4207 | MAPE=50.49% | BDS p=0.954 OK
+  lag=28d fold=3 | RMSE=0.5105 | MAPE=51.81% | BDS p=0.997 OK
+  lag=28d fold=4 | RMSE=0.3000 | MAPE=68.03% | BDS p=0.977 OK
+
+============================================================
+  RNN — arch=(64, 32, 64) | dropout=(True, False, False)
+============================================================
+  lag=7d fold=0 | RMSE=0.2554 | MAPE=43.23% | BDS p=0.902 OK
+  lag=7d fold=1 | RMSE=0.2611 | MAPE=40.48% | BDS p=0.995 OK
+  lag=7d fold=2 | RMSE=0.2485 | MAPE=41.06% | BDS p=0.930 OK
+  lag=7d fold=3 | RMSE=0.2307 | MAPE=42.42% | BDS p=0.943 OK
+  lag=7d fold=4 | RMSE=0.2597 | MAPE=43.52% | BDS p=0.955 OK
+  lag=14d fold=0 | RMSE=0.2060 | MAPE=39.44% | BDS p=0.994 OK
+  lag=14d fold=1 | RMSE=0.2214 | MAPE=40.10% | BDS p=0.967 OK
+  lag=14d fold=2 | RMSE=0.2265 | MAPE=45.20% | BDS p=0.951 OK
+  lag=14d fold=3 | RMSE=0.2404 | MAPE=49.18% | BDS p=0.981 OK
+  lag=14d fold=4 | RMSE=0.2751 | MAPE=49.83% | BDS p=0.995 OK
+  lag=21d fold=0 | RMSE=0.2364 | MAPE=44.77% | BDS p=0.966 OK
+  lag=21d fold=1 | RMSE=0.2467 | MAPE=45.90% | BDS p=0.974 OK
+  lag=21d fold=2 | RMSE=0.2573 | MAPE=46.13% | BDS p=0.982 OK
+  lag=21d fold=3 | RMSE=0.2648 | MAPE=46.07% | BDS p=0.956 OK
+  lag=21d fold=4 | RMSE=0.2192 | MAPE=43.28% | BDS p=0.962 OK
+  lag=28d fold=0 | RMSE=0.2917 | MAPE=44.28% | BDS p=0.991 OK
+  lag=28d fold=1 | RMSE=0.3858 | MAPE=47.04% | BDS p=0.918 OK
+  lag=28d fold=2 | RMSE=0.4420 | MAPE=56.21% | BDS p=0.981 OK
+  lag=28d fold=3 | RMSE=0.5323 | MAPE=51.24% | BDS p=0.988 OK
+  lag=28d fold=4 | RMSE=0.3186 | MAPE=59.50% | BDS p=0.915 OK
+
+============================================================
+  LSTM — arch=(32,) | dropout=(True,)
+============================================================
+  lag=7d fold=0 | RMSE=0.2530 | MAPE=44.55% | BDS p=0.907 OK
+  lag=7d fold=1 | RMSE=0.2573 | MAPE=43.45% | BDS p=0.994 OK
+  lag=7d fold=2 | RMSE=0.2443 | MAPE=41.68% | BDS p=0.955 OK
+  lag=7d fold=3 | RMSE=0.2265 | MAPE=41.89% | BDS p=0.947 OK
+  lag=7d fold=4 | RMSE=0.2565 | MAPE=43.43% | BDS p=0.908 OK
+  lag=14d fold=0 | RMSE=0.1947 | MAPE=42.33% | BDS p=0.916 OK
+  lag=14d fold=1 | RMSE=0.2095 | MAPE=42.89% | BDS p=0.916 OK
+  lag=14d fold=2 | RMSE=0.2107 | MAPE=43.57% | BDS p=0.957 OK
+  lag=14d fold=3 | RMSE=0.2168 | MAPE=44.86% | BDS p=0.995 OK
+  lag=14d fold=4 | RMSE=0.2681 | MAPE=45.25% | BDS p=0.975 OK
+  lag=21d fold=0 | RMSE=0.2221 | MAPE=43.08% | BDS p=0.983 OK
+  lag=21d fold=1 | RMSE=0.2267 | MAPE=43.70% | BDS p=0.944 OK
+  lag=21d fold=2 | RMSE=0.2462 | MAPE=42.45% | BDS p=0.913 OK
+  lag=21d fold=3 | RMSE=0.2547 | MAPE=41.21% | BDS p=0.912 OK
+  lag=21d fold=4 | RMSE=0.1896 | MAPE=41.11% | BDS p=0.959 OK
+  lag=28d fold=0 | RMSE=0.2958 | MAPE=41.93% | BDS p=0.963 OK
+  lag=28d fold=1 | RMSE=0.3689 | MAPE=44.25% | BDS p=0.962 OK
+  lag=28d fold=2 | RMSE=0.4226 | MAPE=50.88% | BDS p=0.901 OK
+  lag=28d fold=3 | RMSE=0.5142 | MAPE=48.37% | BDS p=0.980 OK
+  lag=28d fold=4 | RMSE=0.2844 | MAPE=62.20% | BDS p=0.937 OK
+
+✅ Evaluacion completa — checkpoint guardado en results_all_checkpoint.pkl
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="tabla-comparativa-y-tablas-por-fold">
+<h2>10. Tabla comparativa y tablas por fold<a class="headerlink" href="#tabla-comparativa-y-tablas-por-fold" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp_rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">mtype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;MLP&#39;</span><span class="p">,</span> <span class="s1">&#39;RNN&#39;</span><span class="p">,</span> <span class="s1">&#39;LSTM&#39;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">lag</span> <span class="ow">in</span> <span class="n">LAGS_LIST</span><span class="p">:</span>
+        <span class="n">folds</span>     <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">results_all</span><span class="p">[</span><span class="n">mtype</span><span class="p">][</span><span class="n">lag</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">rmse_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">results_all</span><span class="p">[</span><span class="n">mtype</span><span class="p">][</span><span class="n">lag</span><span class="p">][</span><span class="n">f</span><span class="p">][</span><span class="s1">&#39;rmse_test&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">folds</span><span class="p">]</span>
+        <span class="n">mape_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">results_all</span><span class="p">[</span><span class="n">mtype</span><span class="p">][</span><span class="n">lag</span><span class="p">][</span><span class="n">f</span><span class="p">][</span><span class="s1">&#39;metrics_test&#39;</span><span class="p">][</span><span class="s1">&#39;mean&#39;</span><span class="p">][</span><span class="s1">&#39;MAPE&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">folds</span><span class="p">]</span>
+        <span class="n">bds_list</span>  <span class="o">=</span> <span class="p">[</span><span class="n">results_all</span><span class="p">[</span><span class="n">mtype</span><span class="p">][</span><span class="n">lag</span><span class="p">][</span><span class="n">f</span><span class="p">][</span><span class="s1">&#39;bds_pval&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">folds</span><span class="p">]</span>
+        <span class="n">comp_rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;Modelo&#39;</span><span class="p">:</span>        <span class="n">mtype</span><span class="p">,</span>
+            <span class="s1">&#39;Lag (dias)&#39;</span><span class="p">:</span>    <span class="n">lag</span><span class="p">,</span>
+            <span class="s1">&#39;RMSE mean±std&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rmse_list</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> +/- </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rmse_list</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;MAPE mean±std&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mape_list</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">% +/- </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">mape_list</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;BDS p mean&#39;</span><span class="p">:</span>    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">bds_list</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;BDS p&gt;0.05&#39;</span><span class="p">:</span>    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">bds_list</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">p</span><span class="o">&gt;</span><span class="mf">0.05</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">folds</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">})</span>
+
+<span class="n">comp_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">comp_rows</span><span class="p">)</span>
+<span class="n">comp_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;results/summary_comparison.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">comp_df</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">mtype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;MLP&#39;</span><span class="p">,</span> <span class="s1">&#39;RNN&#39;</span><span class="p">,</span> <span class="s1">&#39;LSTM&#39;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">lag</span> <span class="ow">in</span> <span class="n">LAGS_LIST</span><span class="p">:</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">fold</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">results_all</span><span class="p">[</span><span class="n">mtype</span><span class="p">][</span><span class="n">lag</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">results_all</span><span class="p">[</span><span class="n">mtype</span><span class="p">][</span><span class="n">lag</span><span class="p">][</span><span class="n">fold</span><span class="p">];</span> <span class="n">m</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;metrics_test&#39;</span><span class="p">]</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Fold&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Fold </span><span class="si">{</span><span class="n">fold</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">}</span>
+            <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N_STEPS_FORECAST</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">row</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;MAPE_h</span><span class="si">{</span><span class="n">h</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;h</span><span class="si">{</span><span class="n">h</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;MAPE&#39;</span><span class="p">]</span>
+                <span class="n">row</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;RMSE_h</span><span class="si">{</span><span class="n">h</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;h</span><span class="si">{</span><span class="n">h</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][</span><span class="s1">&#39;RMSE&#39;</span><span class="p">]</span>
+            <span class="n">row</span><span class="p">[</span><span class="s1">&#39;MAPE_mean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">][</span><span class="s1">&#39;MAPE&#39;</span><span class="p">];</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;MAE_mean&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">][</span><span class="s1">&#39;MAE&#39;</span><span class="p">]</span>
+            <span class="n">row</span><span class="p">[</span><span class="s1">&#39;RMSE_mean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">][</span><span class="s1">&#39;RMSE&#39;</span><span class="p">];</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;MSE_mean&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">][</span><span class="s1">&#39;MSE&#39;</span><span class="p">]</span>
+            <span class="n">row</span><span class="p">[</span><span class="s1">&#39;BDS_pval_h1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;bds_pval&#39;</span><span class="p">]</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="n">df_t</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Fold&#39;</span><span class="p">)</span>
+        <span class="n">means</span> <span class="o">=</span> <span class="n">df_t</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">6</span><span class="p">);</span> <span class="n">stds</span> <span class="o">=</span> <span class="n">df_t</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+        <span class="n">df_t</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;Mean +/- Std&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">means</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> +/- </span><span class="si">{</span><span class="n">stds</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df_t</span><span class="o">.</span><span class="n">columns</span><span class="p">}</span>
+        <span class="n">df_t</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;results/metrics_</span><span class="si">{</span><span class="n">mtype</span><span class="si">}</span><span class="s1">_lag</span><span class="si">{</span><span class="n">lag</span><span class="si">}</span><span class="s1">.csv&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">✅ Tablas guardadas en results/&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Modelo</th>
+      <th>Lag (dias)</th>
+      <th>RMSE mean±std</th>
+      <th>MAPE mean±std</th>
+      <th>BDS p mean</th>
+      <th>BDS p&gt;0.05</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>MLP</td>
+      <td>7</td>
+      <td>0.2483 +/- 0.0128</td>
+      <td>41.80% +/- 1.25%</td>
+      <td>0.959</td>
+      <td>5/5</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>MLP</td>
+      <td>14</td>
+      <td>0.2245 +/- 0.0275</td>
+      <td>45.34% +/- 3.79%</td>
+      <td>0.964</td>
+      <td>5/5</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>MLP</td>
+      <td>21</td>
+      <td>0.2323 +/- 0.0208</td>
+      <td>41.39% +/- 1.87%</td>
+      <td>0.948</td>
+      <td>5/5</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>MLP</td>
+      <td>28</td>
+      <td>0.3786 +/- 0.0825</td>
+      <td>51.92% +/- 8.67%</td>
+      <td>0.971</td>
+      <td>5/5</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>RNN</td>
+      <td>7</td>
+      <td>0.2511 +/- 0.0111</td>
+      <td>42.14% +/- 1.19%</td>
+      <td>0.945</td>
+      <td>5/5</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>RNN</td>
+      <td>14</td>
+      <td>0.2339 +/- 0.0233</td>
+      <td>44.75% +/- 4.37%</td>
+      <td>0.977</td>
+      <td>5/5</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>RNN</td>
+      <td>21</td>
+      <td>0.2449 +/- 0.0160</td>
+      <td>45.23% +/- 1.09%</td>
+      <td>0.968</td>
+      <td>5/5</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>RNN</td>
+      <td>28</td>
+      <td>0.3941 +/- 0.0868</td>
+      <td>51.65% +/- 5.62%</td>
+      <td>0.959</td>
+      <td>5/5</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>LSTM</td>
+      <td>7</td>
+      <td>0.2475 +/- 0.0115</td>
+      <td>43.00% +/- 1.07%</td>
+      <td>0.942</td>
+      <td>5/5</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>LSTM</td>
+      <td>14</td>
+      <td>0.2200 +/- 0.0252</td>
+      <td>43.78% +/- 1.12%</td>
+      <td>0.952</td>
+      <td>5/5</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>LSTM</td>
+      <td>21</td>
+      <td>0.2279 +/- 0.0226</td>
+      <td>42.31% +/- 1.02%</td>
+      <td>0.942</td>
+      <td>5/5</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>LSTM</td>
+      <td>28</td>
+      <td>0.3772 +/- 0.0850</td>
+      <td>49.53% +/- 7.06%</td>
+      <td>0.948</td>
+      <td>5/5</td>
+    </tr>
+  </tbody>
+</table>
+</div></div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✅ Tablas guardadas en results/
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="guardar-mejor-modelo">
+<h2>11. Guardar mejor modelo<a class="headerlink" href="#guardar-mejor-modelo" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+
+<span class="n">best_global</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;rmse&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s1">&#39;mtype&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;lag&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;fold&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+<span class="k">for</span> <span class="n">mtype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;MLP&#39;</span><span class="p">,</span> <span class="s1">&#39;RNN&#39;</span><span class="p">,</span> <span class="s1">&#39;LSTM&#39;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">lag</span> <span class="ow">in</span> <span class="n">LAGS_LIST</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">fold</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results_all</span><span class="p">[</span><span class="n">mtype</span><span class="p">][</span><span class="n">lag</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;rmse_test&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">best_global</span><span class="p">[</span><span class="s1">&#39;rmse&#39;</span><span class="p">]:</span>
+                <span class="n">best_global</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;rmse&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;rmse_test&#39;</span><span class="p">],</span> <span class="s1">&#39;mtype&#39;</span><span class="p">:</span> <span class="n">mtype</span><span class="p">,</span> <span class="s1">&#39;lag&#39;</span><span class="p">:</span> <span class="n">lag</span><span class="p">,</span> <span class="s1">&#39;fold&#39;</span><span class="p">:</span> <span class="n">fold</span><span class="p">}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mejor modelo: </span><span class="si">{</span><span class="n">best_global</span><span class="p">[</span><span class="s1">&#39;mtype&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> | lag=</span><span class="si">{</span><span class="n">best_global</span><span class="p">[</span><span class="s1">&#39;lag&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">d | &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;fold=</span><span class="si">{</span><span class="n">best_global</span><span class="p">[</span><span class="s1">&#39;fold&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> | RMSE=</span><span class="si">{</span><span class="n">best_global</span><span class="p">[</span><span class="s1">&#39;rmse&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">bm</span> <span class="o">=</span> <span class="n">best_global</span>
+<span class="n">sp</span> <span class="o">=</span> <span class="n">splits</span><span class="p">[</span><span class="n">bm</span><span class="p">[</span><span class="s1">&#39;lag&#39;</span><span class="p">]]</span>
+<span class="n">arch_b</span>  <span class="o">=</span> <span class="n">best_configs</span><span class="p">[</span><span class="n">bm</span><span class="p">[</span><span class="s1">&#39;mtype&#39;</span><span class="p">]][</span><span class="s1">&#39;arquitectura&#39;</span><span class="p">]</span>
+<span class="n">dmask_b</span> <span class="o">=</span> <span class="n">best_configs</span><span class="p">[</span><span class="n">bm</span><span class="p">[</span><span class="s1">&#39;mtype&#39;</span><span class="p">]][</span><span class="s1">&#39;dropout_mask&#39;</span><span class="p">]</span>
+
+<span class="n">X_tr_r</span>  <span class="o">=</span> <span class="n">sp</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">][</span><span class="n">bm</span><span class="p">[</span><span class="s1">&#39;fold&#39;</span><span class="p">]];</span>   <span class="n">y_tr_r</span>  <span class="o">=</span> <span class="n">sp</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">][</span><span class="n">bm</span><span class="p">[</span><span class="s1">&#39;fold&#39;</span><span class="p">]]</span>
+<span class="n">X_val_r</span> <span class="o">=</span> <span class="n">sp</span><span class="p">[</span><span class="s1">&#39;Xcv&#39;</span><span class="p">][</span><span class="n">bm</span><span class="p">[</span><span class="s1">&#39;fold&#39;</span><span class="p">]];</span> <span class="n">y_val_r</span> <span class="o">=</span> <span class="n">sp</span><span class="p">[</span><span class="s1">&#39;ycv&#39;</span><span class="p">][</span><span class="n">bm</span><span class="p">[</span><span class="s1">&#39;fold&#39;</span><span class="p">]]</span>
+<span class="n">sx</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_tr_r</span><span class="p">);</span> <span class="n">sy</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">y_tr_r</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">bm</span><span class="p">[</span><span class="s1">&#39;mtype&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;RNN&#39;</span><span class="p">,</span> <span class="s1">&#39;LSTM&#39;</span><span class="p">):</span>
+    <span class="n">X_in</span>     <span class="o">=</span> <span class="n">sx</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_tr_r</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">bm</span><span class="p">[</span><span class="s1">&#39;lag&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">X_val_in</span> <span class="o">=</span> <span class="n">sx</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_val_r</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">bm</span><span class="p">[</span><span class="s1">&#39;lag&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">X_in</span>     <span class="o">=</span> <span class="n">sx</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_tr_r</span><span class="p">)</span>
+    <span class="n">X_val_in</span> <span class="o">=</span> <span class="n">sx</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_val_r</span><span class="p">)</span>
+
+<span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">clear_session</span><span class="p">();</span> <span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="k">if</span>   <span class="n">bm</span><span class="p">[</span><span class="s1">&#39;mtype&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;MLP&#39;</span><span class="p">:</span>  <span class="n">best_model</span> <span class="o">=</span> <span class="n">build_mlp</span><span class="p">(</span><span class="n">arch_b</span><span class="p">,</span> <span class="n">dmask_b</span><span class="p">,</span> <span class="n">bm</span><span class="p">[</span><span class="s1">&#39;lag&#39;</span><span class="p">],</span> <span class="n">N_STEPS_FORECAST</span><span class="p">)</span>
+<span class="k">elif</span> <span class="n">bm</span><span class="p">[</span><span class="s1">&#39;mtype&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;RNN&#39;</span><span class="p">:</span>  <span class="n">best_model</span> <span class="o">=</span> <span class="n">build_rnn</span><span class="p">(</span><span class="n">arch_b</span><span class="p">,</span> <span class="n">dmask_b</span><span class="p">,</span> <span class="n">bm</span><span class="p">[</span><span class="s1">&#39;lag&#39;</span><span class="p">],</span> <span class="n">N_STEPS_FORECAST</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>                        <span class="n">best_model</span> <span class="o">=</span> <span class="n">build_lstm</span><span class="p">(</span><span class="n">arch_b</span><span class="p">,</span> <span class="n">dmask_b</span><span class="p">,</span> <span class="n">bm</span><span class="p">[</span><span class="s1">&#39;lag&#39;</span><span class="p">],</span> <span class="n">N_STEPS_FORECAST</span><span class="p">)</span>
+
+<span class="n">ctx</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;/CPU:0&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">bm</span><span class="p">[</span><span class="s1">&#39;mtype&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;LSTM&#39;</span> <span class="k">else</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">nullcontext</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">ctx</span><span class="p">:</span>
+    <span class="n">best_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_in</span><span class="p">,</span> <span class="n">sy</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">y_tr_r</span><span class="p">),</span>
+                   <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">X_val_in</span><span class="p">,</span> <span class="n">sy</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">y_val_r</span><span class="p">)),</span>
+                   <span class="n">epochs</span><span class="o">=</span><span class="n">EPOCHS</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span>
+                   <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">EarlyStopping</span><span class="p">(</span><span class="n">patience</span><span class="o">=</span><span class="n">PATIENCE</span><span class="p">,</span> <span class="n">restore_best_weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)],</span>
+                   <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">best_model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;app/model_keras.keras&#39;</span><span class="p">)</span>
+<span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s1">&#39;scaler_x&#39;</span><span class="p">:</span> <span class="n">sx</span><span class="p">,</span> <span class="s1">&#39;scaler_y&#39;</span><span class="p">:</span> <span class="n">sy</span><span class="p">,</span> <span class="s1">&#39;lag&#39;</span><span class="p">:</span> <span class="n">bm</span><span class="p">[</span><span class="s1">&#39;lag&#39;</span><span class="p">],</span>
+             <span class="s1">&#39;model_type&#39;</span><span class="p">:</span> <span class="n">bm</span><span class="p">[</span><span class="s1">&#39;mtype&#39;</span><span class="p">],</span> <span class="s1">&#39;best_global&#39;</span><span class="p">:</span> <span class="n">best_global</span><span class="p">},</span> <span class="s1">&#39;app/scalers.joblib&#39;</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;results.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span>
+        <span class="s1">&#39;results_all&#39;</span><span class="p">:</span>    <span class="n">results_all</span><span class="p">,</span>
+        <span class="s1">&#39;best_configs&#39;</span><span class="p">:</span>   <span class="n">best_configs</span><span class="p">,</span>
+        <span class="s1">&#39;best_global&#39;</span><span class="p">:</span>    <span class="n">best_global</span><span class="p">,</span>
+        <span class="s1">&#39;lags_list&#39;</span><span class="p">:</span>      <span class="n">LAGS_LIST</span><span class="p">,</span>
+        <span class="s1">&#39;n_steps_forecast&#39;</span><span class="p">:</span> <span class="n">N_STEPS_FORECAST</span><span class="p">,</span>
+        <span class="s1">&#39;target_col&#39;</span><span class="p">:</span>     <span class="n">TARGET_COL</span><span class="p">,</span>
+        <span class="s1">&#39;time_series&#39;</span><span class="p">:</span>    <span class="n">time_series</span><span class="p">,</span>
+        <span class="s1">&#39;dates&#39;</span><span class="p">:</span>          <span class="n">dates</span><span class="p">,</span>
+    <span class="p">},</span> <span class="n">f</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">✅ app/model_keras.keras guardado&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ app/scalers.joblib guardado&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ results.pkl guardado&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mejor modelo: LSTM | lag=21d | fold=4 | RMSE=0.1896
+
+✅ app/model_keras.keras guardado
+✅ app/scalers.joblib guardado
+✅ results.pkl guardado
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="2_features_engineering.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">⚙️ Feature Engineering &amp; Cross-Validation Split</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="4_model_evaluation.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">📊 Model Evaluation — MLP · RNN · LSTM</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deep-learning-project-bitcoin-volatility-forecasting">Deep Learning Project | Bitcoin Volatility Forecasting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verificacion-de-gpu">0. Verificación de GPU</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cargar-features-pkl">1. Cargar features.pkl</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metricas-y-bds-test">2. Metricas y BDS test</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuracion-del-grid-search">3. Configuracion del grid search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constructores-mlp-rnn-lstm">4. Constructores — MLP · RNN · LSTM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#funcion-de-grid-search">5. Funcion de grid search</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preparar-datos-fold-0-lag-14d">6. Preparar datos — fold 0, lag=14d</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grid-search-con-checkpoints">7. Grid search con checkpoints</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#seleccion-automatica-de-arquitecturas">8. Seleccion automatica de arquitecturas</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluacion-completa-5-folds-4-lags-3-modelos">9. Evaluacion completa — 5 folds × 4 lags × 3 modelos</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabla-comparativa-y-tablas-por-fold">10. Tabla comparativa y tablas por fold</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#guardar-mejor-modelo">11. Guardar mejor modelo</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Luis David Peñaranda Pérez
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
