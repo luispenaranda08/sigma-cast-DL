@@ -1,0 +1,80 @@
+/* Palantir Dark Theme - Academic Structure Preserved */
+:root {
+  --bg-primary: #0a0e14;
+  --bg-secondary: #141a24;
+  --bg-tertiary: #1c2532;
+  --border-color: #2a3a4a;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b9bb4;
+  --accent-cyan: #39d0d8;
+  --accent-green: #4ade80;
+}
+
+body {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.bd-sidebar {
+  background-color: var(--bg-secondary) !important;
+  border-right: 1px solid var(--border-color) !important;
+}
+
+.bd-sidebar .nav-link {
+  color: var(--text-secondary) !important;
+}
+
+.bd-sidebar .nav-link:hover {
+  color: var(--accent-cyan) !important;
+}
+
+.bd-sidebar .nav-link.active {
+  color: var(--accent-green) !important;
+  background-color: var(--bg-tertiary) !important;
+  border-left: 3px solid var(--accent-cyan) !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary) !important;
+}
+
+h1 {
+  border-bottom: 2px solid var(--accent-cyan) !important;
+}
+
+h2 {
+  border-left: 4px solid var(--accent-green) !important;
+  padding-left: 1rem !important;
+}
+
+a {
+  color: var(--accent-cyan) !important;
+}
+
+a:hover {
+  color: var(--accent-green) !important;
+}
+
+.cell_input, .highlight, pre {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px !important;
+}
+
+code {
+  color: var(--accent-green) !important;
+}
+
+table {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+th {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--accent-cyan) !important;
+}
+
+td {
+  color: var(--text-primary) !important;
+}

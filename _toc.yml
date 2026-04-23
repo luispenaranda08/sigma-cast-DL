@@ -1,0 +1,8 @@
+format: jb-book
+root: intro
+
+chapters:
+  - file: 1_eda_volatility_final
+  - file: 2_features_engineering   # ← corregido
+  - file: 3_model_training
+  - file: 4_model_evaluation
